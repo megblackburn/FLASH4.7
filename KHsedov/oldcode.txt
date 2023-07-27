@@ -1,0 +1,16 @@
+        solnData(DENS_VAR,i,j,k)=rho
+        !solnData(PRES_VAR,i,j,k)=p
+        !solnData(ENER_VAR,i,j,k)=e
+#ifdef EINT_VAR
+        !solnData(EINT_VAR,i,j,k)=eint
+#endif
+        !solnData(GAME_VAR,i,j,k)=sim_gamma
+        !solnData(GAMC_VAR,i,j,k)=sim_gamma
+        !solnData(VELX_VAR,i,j,k)=vx
+        !solnData(VELY_VAR,i,j,k)=vy
+        !solnData(VELZ_VAR,i,j,k)=vz
+
+  call Grid_getBlkPtr(blockId,solnData)
+
+  call Grid_releaseBlkPtr(blockID, solnData)
+

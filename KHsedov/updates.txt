@@ -1,0 +1,7 @@
+Current directory: KHsedov 27/07/23
+
+- copied Simulation_initBlock from scratch directory
+- tried adding solnData lines with Grid_releaseBlkPtr(blockId, solnData) - didnt work
+- tried adding rho=180.0 - didnt work 
+- error on line with grid_...(...DENS_VAR....) - out of bounds indexing
+
