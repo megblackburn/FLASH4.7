@@ -1,0 +1,171 @@
+#	Runtime parameters for the Sedov explosion problem.
+
+#	Parameters for initial model
+
+#		Ambient pressure and density, explosion energy, initial
+#		radius of perturbation, and location of explosion center
+#sim_isOriginalSedov=.false.
+sim_pAmbient	= 1.E-5
+sim_rhoAmbient	= 1.
+sim_expEnergy	= 1.
+sim_rInit		= 0.013671875
+sim_xctr		= 0.5
+sim_yctr		= 0.5
+sim_zctr		= 0.5
+
+# Specify file from which to read initial / analytical profile, or "/dev/null" for none:
+sim_profFileName        = "/dev/null"
+
+# NEW PARAMETERS
+sim_tempHot = 1.0E6
+sim_tempCold = 1.0E4
+sim_rhoCold  = 1.67E-24
+sim_rhoHot  = 1.67E-26
+sim_cloudTemp = 1E4
+sim_densContrast = 100
+sim_cloudDens    = 1.E-25
+useCool = .true.
+cl_useCoolExactInt = .true.
+cl_useHeatExactInt = .false.
+sim_velx = 1.e6
+small  = 1.0e-30
+smallp = 1.0e-30
+smalle = 1.0e-30
+smallt = 1.0e-30
+smallu = 1.0e-30
+smallx = 1.0e-30
+smlrho = 1.0e-30
+smallT = 1.0e-30
+dtmax = 1.0e30
+
+sim_shift_start = 1.0
+#		Gas ratio of specific heats
+
+gamma           = 1.4
+
+#	Computational volume parameters
+
+#		Grid dimensionality and geometry
+
+geometry = "cartesian"
+
+#		Size of computational volume
+
+xmin		= -3.0856E18
+xmax		= 3.0856E18
+ymin		= -3.0856E18
+ymax		= 3.0856E18
+zmin		= -3.0856E18
+zmax		= 3.0856E18
+
+#		Boundary conditions
+
+
+xl_boundary_type = "periodic"
+xr_boundary_type = "periodic"
+
+yl_boundary_type = "outflow"
+yr_boundary_type = "outflow"
+
+zl_boundary_type = "outflow"
+zr_boundary_type = "outflow"
+
+
+
+
+
+#	Simulation time, I/O  parameters
+
+cfl		= 0.2
+basenm          = "sedovkh_"
+restart         = .false.
+
+
+#	checkpoint file output parameters
+checkpointFileIntervalTime = 0 #0.01
+checkpointFileIntervalStep = 1
+checkpointFileNumber = 0
+
+#	plotfile output parameters
+plotfileIntervalTime = 0.
+plotfileIntervalStep = 0
+plotfileNumber = 0
+
+
+
+nrefs           = 1000000 # NEW 23.08
+
+nend            = 100
+tmax            = 3.e16
+
+run_comment     = "Sedov explosion kh"
+log_file        = "khedit.log"
+eintSwitch     = 1.e-4
+
+plot_var_1 = "dens"
+plot_var_2 = "pres"
+plot_var_3 = "temp"
+
+#  Adaptive Grid refinement parameters
+lrefine_min     = 6 # NEW 23.08
+lrefine_max     = 6 # was at 6 
+refine_var_1 = "dens"
+refine_var_2 = "pres"
+
+
+# Uniform Grid specific parameters 
+# see note below for more explanation
+
+#iGridSize = 8   #global number of gridpoints along x, excluding gcells
+#jGridSize = 8   #global number of gridpoints along y, excluding gcells
+#kGridSize = 1
+iProcs = 1	#num procs in i direction
+jProcs = 1	#num procs in j direction
+kProcs = 1
+
+
+# When using UG, iProcs, jProcs and kProcs must be specified.
+# These are the processors along each of the dimensions
+#FIXEDBLOCKSIZE mode ::
+# When using fixed blocksize, iGridSize etc are redundant in
+# runtime parameters. These quantities are calculated as 
+# iGridSize = NXB*iprocs
+# jGridSize = NYB*jprocs
+# kGridSize = NZB*kprocs
+#NONFIXEDBLOCKSIZE mode ::
+# iGridSize etc must be specified. They constitute the global
+# number of grid points in the physical domain without taking 
+# the guard cell into account. The local blocksize is calculated
+# as iGridSize/iprocs  etc.
+ 
+ 
+## -------------------------------------------------------------##
+##  SWITCHES SPECIFIC TO THE UNSPLIT HYDRO SOLVER               ##
+#	I. INTERPOLATION SCHEME:
+order		= 2      # Interpolation order (first/second/third/fifth order)
+slopeLimiter    = "minmod"   # Slope limiters (minmod, mc, vanLeer, hybrid, limited)
+LimitedSlopeBeta= 1.     # Slope parameter for the "limited" slope by Toro
+charLimiting	= .true. # Characteristic limiting vs. Primitive limiting
+
+use_avisc	= .true. # use artificial viscosity (originally for PPM)
+cvisc		= 0.1     # coefficient for artificial viscosity
+use_flattening	= .false. # use flattening (dissipative) (originally for PPM)
+use_steepening	= .false. # use contact steepening (originally for PPM)
+use_upwindTVD	= .false. # use upwind biased TVD slope for PPM (need nguard=6)
+
+#	II. RIEMANN SOLVERS:
+RiemannSolver	= "HLLC"       # Roe, HLL, HLLC, LLF, Marquina
+entropy         = .false.     # Entropy fix for the Roe solver
+
+#	III. STRONG SHOCK HANDLING SCHEME:
+shockDetect	= .false.     # Shock Detect for numerical stability
+## -------------------------------------------------------------##
+
+## ---------------------------------------------------------------##
+##  SWITCHES SPECIFIC TO THE SUPER-TIME-STEPPING (STS) ALGORITHM  ##
+##  NOTE: For details on using STS runtime parameters, please     ##
+##        refer to user's guide (Driver chapter).                 ##
+useSTS                  = .false.
+nstepTotalSTS           = 5
+nuSTS                   = 0.2
+## ---------------------------------------------------------------##

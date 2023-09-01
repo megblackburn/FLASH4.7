@@ -1,0 +1,94 @@
+Current directory: KHsedovcool 08/08/23
+
+- error with the boltzmann constant in cool_init - have hard coded in value as it gave T_ zero from calculating other KelvinPerKeV with KB
+- also changed out the Lambda_ = 0.0 to 0.01 as divide by 0 error, LambdaH_ had last 2 values in array = 0.0 - changed to 0.001
+- error with the compute_lambda and simulation_init files - LAMBDA_ has no values 
+- in Cool_init write(*,*) "LambdaC_", Lambda - line 135 changed to just Lambda_
+- can try kk IN instead of OUT in compute_lambda - no
+- added use Cool_init to Simulation_init - didnt work
+- changed boltzmann constant back to cl_Boltzmann and it has run 
+- set useCool = .true. in flash.par - only had 1 output file (checked pattern)
+- set cl_useCoolExactInt = .true. in flash.par
+
+
+KHsedovcool 09.08.23
+- changed flash.par: 
+		sim_tempLo = 1.0e6 from 180
+		sim_tempUp = 1.0e4 from 18
+		sim_rhoLo  = 1.67e-24 from 1
+		sim_rhoUp  = 1.67e-26 from 10
+		sim_cloudTemp = 1e4 from 4e4
+		checkpointFileIntervalStep = 1 from 0 - for debugging
+		nend            = 10 from 10000
+- changes Sim_initBlock:
+		pressure was changed to inclue amu and wmu
+		added boltzmann constant, sim_amu, sim_wmu and sim_yp
+- changes sim_init:
+		got boltzmann constant
+		added sim_amu, sim_wmu and sim_yp
+
+KHsedovcool 14.08.23 
+- tried changing densities as this causes the error - no dts shown in .out file
+		got rid of warning and gave dt values in .out file which increased as expected when cooling is on but results are 
+		just uniform no change
+		when densities are correct (Ryans values) gives warning in .out file and no dt values - and the same wrong output 
+		like in plots11
+- changed 1d0 to 1.0 in Cool_exact_integrate
+
+18.08.23
+- added sim_velx to sim, set in flash.par, scaling factor for vely and velocity for velx
+- velz set = to velx 
+- temperature range wanted = ~100-10^6 K
+- change the density parameter
+- consider incorporating Damkohler number
+
+KHsedovcool 23.08.23
+- changes:
+	cfl = 0.2 from 0.8
+	dtmax = 1.e30 added to flash.par
+	lrefine_min = value of lrefine_max
+	lrefine_min/max both set to 4 (max was at 6)
+	nrefs = 1000000 added to flash.par 
+	order = 2 from 3 in flash.par 	
+	slopeLimiter = "minmod" from "mc" in .par
+
+
+shiftcool 24.08.23
+- shift directory made 23/08
+- changed velocities and min/max to y from z
+- changed the sim_tempHot to sim_tempCold in the c_s equation
+- added global* to the top outside forloops and ==0.0
+- added front_posn_new = sim_yMin outside for loops also
+- changed CALL to call in MPI_ALLREDUCE Lines
+- added all lines until front_velocity into for loops
+- added Driver_shift as an interface in Driver_interface (copied from object dir after ./setup)
+- added Driver_shift to Driver_evolveFlash in Driver_interface, ONLY section and then called the function
+- removed the blockId from the function following format of Driver_moveToCloudFrame
+- changed all blockId to blkID and used correct call functions to get the coords
+- need to recompile and run again tomorrow (25/08) (latest change is c_s equation sim_tempCold
+
+KHshiftcool_current (previously shiftcool2) 25.08.23
+- commented out front_posn_new = sim_yMin - posn_new only defined within do loop now
+- changed temperature equation /kb_mu_mp from *kb_mu_mp (this is wrong in the athena and athena++ from github)
+- changed volume equation
+- defined dx, dy from the getDeltas(blkID, del) function
+- changed global and cell volumes to areas? 2 dims, global volume works as z limits are real, but dz is 0 so cell volume is 0 
+- put do loops inside the if time>shift_start statement - doesn't appear to work as no output from Driver_s is shown
+- ADD WRITE DR_SIMTIME!! and some statements before/after if statement
+
+KHshiftcool_current 27.08.23
+- call to Driver_s in Driver_evolveFlash was outside do loop -  moved inside and is now working
+- call for Timers_start/Stop(Driver_s) throws error so were taken out
+- seems to run correctly now --> runs27823/KHshiftcool_current/att5 first successful attempt i think (timed out but output file looks correct - need to check placements of chk file writes and Driver ones??)
+- added solnData to Simulation_init
+- took out the if time statement - can put back in 
+- Driver_s does run but when it starts running the outputs stop ???
+
+KHshiftcool_current 28.08.23
+- added in shift_start if statement
+- changed between blkLimitsGC and blkLimits - GC includes ghost cells
+- took out eos statement - no difference
+- moved solnData call inside do loop - no difference
+- runs until the shift starts then only outputs the chk file after the first run of frame shift - unsure if the frame has shifted in the last chk file but it does run
+- variables all seem like feasible values so far
+
