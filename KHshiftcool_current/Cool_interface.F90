@@ -1,4 +1,7 @@
-! from RF
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!! Header file that defines public interfaces for cooling
+!! from RF
+
 Module Cool_interface
 #include "constants.h"
 #include "Flash.h"
