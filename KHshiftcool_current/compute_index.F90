@@ -1,3 +1,7 @@
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!! computes the index of temperatures
+!! from RF
+
 subroutine compute_index(Temperature, kk)
 
   use Cool_data,    ONLY : T_
