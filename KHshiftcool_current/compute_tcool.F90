@@ -1,3 +1,6 @@
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!! computes the specific internal energy (erg/g)
+
 subroutine compute_tcool(density, Temperature, Lambda, tcool)
 
   use Cool_data,   ONLY : cl_Boltzmann
