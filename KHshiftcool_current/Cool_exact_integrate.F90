@@ -1,4 +1,9 @@
-! uses - from RF
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!! Exact integration technique of Townsend 2009 to integrate the Rosen & Bregman 1995
+!! cooling function and compute the new internal energy
+!!
+!! from RF
+
 subroutine Cool_exact_integrate (e, dt, blockID, ii,jj,kk)
 
   use Cool_data, ONLY : cl_Boltzmann, cl_rho, cl_gamma, alpha_, T_, &
@@ -107,13 +112,16 @@ subroutine Cool_exact_integrate (e, dt, blockID, ii,jj,kk)
 
 
 !********************** COMPUTE Y *************************************
+
   Y = Y_k + 1d0/(1d0-alpha_k) * (Lambda_N/Lambda_k) * &
       (T_k / T_N) * ( 1d0 - ( T_k / T )**(alpha_k-1d0) )
 
 !********************** COMPUTE TCOOL *********************************  
+
   tcool = 1.5d0*KB_dp*T * mu_dp * mp_dp / (cl_rho_dp * Lambda)
 
 !********************** COMPUTE Y_invarg ******************************
+
   Y_invarg = Y + (T/T_N)*(Lambda_N/Lambda)*(DBLE(dt)/tcool)
 
 !********************** COMPUTE Y^{-1} ********************************
