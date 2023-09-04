@@ -1,4 +1,7 @@
-!from RF
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!!
+!! from RF
+
 subroutine Cool_init(myPe)
 
   use Simulation_data, ONLY : sim_cloudTemp, sim_coreTemp, sim_tempWind
@@ -67,7 +70,9 @@ subroutine Cool_init(myPe)
   !! Lambda_(N) gets filled in later
   Lambda_ = (/ 1e-3, 1.5e-3, 3e-3, 2.4e-1, 15.438249, &
                66.831473, 2.773501, 1.195229, 1.842056, 6.10541, 0.01 /) 
-  !! last one was 0.0
+
+!! last value was changed from 0.0 -> 0.01
+
   Lambda_ = Lambda_ * 1e-23
 
   !alpha_ = (/ 2.0, 1.5, 2.867, 6.0, 0.6, -1.7, -0.5, 0.22, 0.4, 0.4 /)
@@ -85,7 +90,8 @@ subroutine Cool_init(myPe)
   Th_     = (/  250.0, 300.0, 400.0,   1e3,      4e3,   1e4,      4e4, 8e4, 1e19 /)
 
   LambdaH_ = (/ 1e-24, 1e-25, 1.03e-26, 4e-27, 2.12e-26, 1e-21, 2.34e-22, 0.001,   0.001 /) 
-  !! last 2 were 0.0
+  
+!! last 2 values were changed from 0.0 -> 0.001
 
   do ii = 0, Nm1h
     alphaH_(ii) = log10(LambdaH_(ii+1)/LambdaH_(ii)) / log10(TH_(ii+1) / TH_(ii))
