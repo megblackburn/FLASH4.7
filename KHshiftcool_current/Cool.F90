@@ -1,7 +1,7 @@
 !!****if* source/Simulation/SimulationMain/KHshiftcool_current
-!!
-!! NAME
-!! cool
+!! 
+!! cooling routine: dependent on true/false of useCool, cl_useCoolExactInt, cl_useHeatExactInt in flash.par
+!! from RF 
 
 
 subroutine Cool (blockCount, blockList, dt, time)
