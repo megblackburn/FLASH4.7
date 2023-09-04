@@ -1,3 +1,9 @@
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!!
+!! NAME
+!! cool
+
+
 subroutine Cool (blockCount, blockList, dt, time)
 
   use Cool_data,       ONLY : useCool, cl_rho, cl_smalle, cl_useCoolExactInt, &
@@ -56,6 +62,7 @@ subroutine Cool (blockCount, blockList, dt, time)
            solnData(COOL_VAR,i,j,k) = (eid - eidold)
 #endif
 
+! update global thermodynamic quantities due to the radiative losses
            ei = eid/cl_rho
            if (ei < cl_smalle) then
              write(*,*) "WARNING applying internal energy floor"
@@ -64,6 +71,7 @@ subroutine Cool (blockCount, blockList, dt, time)
            solnData(ENER_VAR,i,j,k)= ei + ek
            solnData(EINT_VAR,i,j,k) = ei
 
+! radiative loss rate
 #ifdef ENUC_VAR
            solnData(ENUC_VAR,i,j,k) = (eid - eidold) / dt
 #endif
