@@ -1,4 +1,5 @@
-! computes the specific internal energy in erg/g - from RF
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!! computes the specific internal energy in erg/g - from RF
 
 subroutine Cool_compute_eint(Temperature, eint)
   use Cool_data,       ONLY: cl_kb, cl_mu, cl_amu, cl_rho, cl_gamma
