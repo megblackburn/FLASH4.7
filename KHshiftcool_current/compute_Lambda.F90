@@ -1,3 +1,7 @@
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!!
+!! from RF
+
 subroutine compute_Lambda(Temperature, kk, Lambda)
 
   use Cool_data,       ONLY : Lambda_, T_, alpha_
