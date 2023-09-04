@@ -1,5 +1,6 @@
 !!****if* source/Simulation/SimulationMain/KHshiftcool_current
-!! computes the specific internal energy (erg/g)
+!! computes cooling time
+!! from RF
 
 subroutine compute_tcool(density, Temperature, Lambda, tcool)
 
