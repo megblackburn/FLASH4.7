@@ -1,4 +1,5 @@
-! Computes timestep limiter for cooling source term solver - from RF
+!!****if* source/Simulation/SimulationMain/KHshiftcool_current
+!! Computes timestep limiter for cooling source term solver - from RF
 
 subroutine Cool_computeDt (blockID, blkLimits, blkLimitsGC, solnData, &
                            dt_check, dt_minloc)
