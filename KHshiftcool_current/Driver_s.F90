@@ -136,10 +136,8 @@ subroutine Driver_s()
               write(*,*) "j", j
               write(*,*) "k", k
             endif
-            call Grid_getBlkPtr(blkID, solnData)
 
          !   xx = xCoord(i)
-       !!   call Grid_getBlkPtr(blkID, solnData)
             !rho = solnData(DENS_VAR,i,j,k)
             !p = solnData(PRES_VAR,i,j,k)
             temp = (solnData(PRES_VAR,i,j,k)/solnData(DENS_VAR,i,j,k))/sim_kb_mu_mp
@@ -166,19 +164,25 @@ subroutine Driver_s()
             endif
           enddo 
         enddo
-      enddo    
-      local_v2_sum = local_v2_sum +solnData(VELY_VAR,i,j,k)
-      call MPI_ALLREDUCE(local_cold_mass, global_cold_mass, 1, FLASH_REAL, MPI_SUM, dr_globalComm, ierr) !!ierr
-      call MPI_ALLREDUCE(local_v2_sum, global_v2_sum, 1, FLASH_REAL, MPI_SUM, dr_globalComm, ierr)  !!ierr
-      vy_avg = global_v2_sum/global_vol
-      front_posn_new = global_cold_mass/(Lx*Ly*sim_rhoHot*sim_tempHot/sim_tempCold)
-      v_shift_t_new = (-2.0 * (front_posn_new-front_posn_old)/dr_dt) !! use Driver_data, ONLY : dr_dt
+      enddo  
+      deallocate(xCoord)
+      deallocate(yCoord)
+      deallocate(zCoord)
+      call Grid_releaseBlkPtr(blkID, solnData)
+    enddo
 
-      if (abs(v_shift_t_new) > (c_s_cap*c_s)) then
-        v_shift_t_new = v_shift_t_new / abs(v_shift_t_new)
-        v_shift_t_new = v_shift_t_new * c_s * c_s_cap
-      endif
-      front_velocity = -1.0 * v_shift_t_new
+    local_v2_sum = local_v2_sum +solnData(VELY_VAR,i,j,k)
+    call MPI_ALLREDUCE(local_cold_mass, global_cold_mass, 1, FLASH_REAL, MPI_SUM, dr_globalComm, ierr) !!ierr
+    call MPI_ALLREDUCE(local_v2_sum, global_v2_sum, 1, FLASH_REAL, MPI_SUM, dr_globalComm, ierr)  !!ierr
+    vy_avg = global_v2_sum/global_vol
+    front_posn_new = global_cold_mass/(Lx*Ly*sim_rhoHot*sim_tempHot/sim_tempCold)     
+    v_shift_t_new = (-2.0 * (front_posn_new-front_posn_old)/dr_dt) !! use Driver_data, ONLY : dr_dt
+
+    if (abs(v_shift_t_new) > (c_s_cap*c_s)) then
+      v_shift_t_new = v_shift_t_new / abs(v_shift_t_new)
+      v_shift_t_new = v_shift_t_new * c_s * c_s_cap
+    endif
+    front_velocity = -1.0 * v_shift_t_new
 !              endif
          ! else
           !  front_posn_new = front_posn_old
@@ -189,6 +193,33 @@ subroutine Driver_s()
             !!if (dr_globalMe == MASTER_PE) then
               !!write(*,*) "front_posn_new", front_posn_new
             !!endif
+    do bb = 1, blkCount
+      if (dr_globalMe == MASTER_PE) then
+        write(*,*) "Driver_s bb loop"
+      endif
+      blkID = blkList(bb)
+      call Grid_getBlkPtr(blkID, solnData)
+      call Grid_getBlkIndexLimits(blkID, blkLimits, blkLimitsGC)
+
+      sizeX = blkLimitsGC(HIGH,IAXIS) - blkLimitsGC(LOW,IAXIS) + 1
+      allocate(xCoord(sizeX)); xCoord = 0.0
+      sizeY = blkLimitsGC(HIGH,JAXIS) - blkLimitsGC(LOW,JAXIS) + 1
+      allocate(yCoord(sizeY)); yCoord = 0.0
+      sizeZ = blkLimitsGC(HIGH,KAXIS) - blkLimitsGC(LOW,KAXIS) + 1
+      allocate(zCoord(sizeZ)); zCoord = 0.0
+
+      if (NDIM == 3) call Grid_getCellCoords&
+                          (KAXIS, blkID, CENTER, gcell, zCoord, sizeZ)
+
+      if (NDIM >= 2) call Grid_getCellCoords&
+                      (JAXIS, blkID, CENTER,gcell, yCoord, sizeY)
+
+      call Grid_getCellCoords(IAXIS, blkID, CENTER, gcell, xCoord, sizeX)
+      call Grid_getDeltas(blkID, del)
+      dx = del(1)
+      dy = del(2)
+      dz = del(3)
+      cell_vol = dy*dx
       do k = blkLimits(LOW,KAXIS), blkLimits(HIGH,KAXIS)
        ! zz=zCoord(k)
         do j = blkLimits(LOW, JAXIS), blkLimits(HIGH, JAXIS)
